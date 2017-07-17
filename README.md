@@ -1,9 +1,15 @@
 httpfake
 ========
 
-*IMPORTANT: In Development*
+[![LICENSE](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
+[![Godocs](https://img.shields.io/badge/golang-documentation-blue.svg)](https://godoc.org/github.com/maxcnunes/httpfake)
+[![Build Status](https://travis-ci.org/maxcnunes/httpfake.svg?branch=master)](https://travis-ci.org/maxcnunes/httpfake)
+[![Coverage Status](https://coveralls.io/repos/github/maxcnunes/httpfake/badge.svg?branch=master)](https://coveralls.io/github/maxcnunes/httpfake?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/maxcnunes/httpfake)](https://goreportcard.com/report/github.com/maxcnunes/httpfake)
 
-httpfake is a simple wrapper for [httptest](https://golang.org/pkg/net/http/httptest/) with a handful chainable API for defining handlers to the fake server. This package is aimed to be used in tests where an original external server must not be reached. Instead is used in its place a fake server which can be configured to handle any request as desired.
+**IMPORTANT: In Development**
+
+httpfake is a simple wrapper for [httptest](https://golang.org/pkg/net/http/httptest/) with a handful chainable API for defining handlers to the fake server. This package is aimed to be used in tests where the original external server must not be reached. Instead is used in its place a fake server which can be configured to handle any request as desired.
 
 ## Installation
 
@@ -21,7 +27,7 @@ govendor fetch github.com/maxcnunes/httpfake
 
 ## Examples
 
-For a full list of examples please checkout the [examples folder](_examples).
+For a full list of examples please check out the [examples folder](examples).
 
 ```go
 // initialize the faker server
