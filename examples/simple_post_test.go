@@ -2,6 +2,7 @@
 package examples
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -19,9 +20,11 @@ func TestSimplePost(t *testing.T) {
 	fakeService.NewHandler().
 		Post("/users").
 		Reply(201).
-		BodyString(`{"username": "dreamer"}`)
+		BodyString(`{"id": 1, "username": "dreamer"}`)
 
-	res, err := http.Get(fmt.Sprintf("%s/users", fakeService.Server.URL))
+	res, err := http.Post(fmt.Sprintf("%s/users", fakeService.Server.URL),
+		"application/json",
+		bytes.NewBuffer([]byte(`{"username": "dreamer"}`)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +37,7 @@ func TestSimplePost(t *testing.T) {
 	}
 
 	// Check the response body is what we expect
-	expected := `{"username": "dreamer"}`
+	expected := `{"id": 1, "username": "dreamer"}`
 	body, _ := ioutil.ReadAll(res.Body)
 	if bodyString := string(body); bodyString != expected {
 		t.Errorf("request returned unexpected body: got %v want %v",

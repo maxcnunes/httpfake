@@ -44,8 +44,13 @@ func (f *HTTPFake) Reset() *HTTPFake {
 
 func (f *HTTPFake) findHandler(r *http.Request) *Request {
 	founds := []*Request{}
+	url := r.URL.String()
 	for _, rh := range f.RequestHandlers {
-		if rh.URL.String() == r.URL.String() {
+		if rh.Method != r.Method {
+			continue
+		}
+
+		if rh.URL.String() == url {
 			return rh
 		}
 		// fallback if the income request has query strings
