@@ -1,4 +1,5 @@
-package test
+// nolint dupl
+package examples
 
 import (
 	"fmt"
