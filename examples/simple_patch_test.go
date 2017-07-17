@@ -3,7 +3,6 @@ package examples
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -23,7 +22,7 @@ func TestSimplePatch(t *testing.T) {
 		BodyString(`{"id": 1,"username": "dreamer"}`)
 
 	sendBody := bytes.NewBuffer([]byte(`{"username": "dreamer"}`))
-	req, err := http.NewRequest("PATCH", fmt.Sprintf("%s/users/1", fakeService.Server.URL), sendBody)
+	req, err := http.NewRequest("PATCH", fakeService.ResolveURL("/users/1"), sendBody)
 	if err != nil {
 		t.Fatal(err)
 	}

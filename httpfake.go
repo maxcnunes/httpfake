@@ -36,6 +36,11 @@ func (f *HTTPFake) NewHandler() *Request {
 	return rh
 }
 
+// ResolveURL resolves the full URL to the fake server for a given path
+func (f *HTTPFake) ResolveURL(path string) string {
+	return f.Server.URL + path
+}
+
 // Reset ...
 func (f *HTTPFake) Reset() *HTTPFake {
 	f.RequestHandlers = []*Request{}

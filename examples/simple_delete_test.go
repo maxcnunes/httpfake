@@ -2,7 +2,6 @@
 package examples
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -20,7 +19,7 @@ func TestSimpleDelete(t *testing.T) {
 		Delete("/users").
 		Reply(200)
 
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/users", fakeService.Server.URL), nil)
+	req, err := http.NewRequest("DELETE", fakeService.ResolveURL("/users"), nil)
 	if err != nil {
 		t.Fatal(err)
 	}

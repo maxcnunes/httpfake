@@ -3,7 +3,6 @@ package examples
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -22,9 +21,8 @@ func TestSimplePost(t *testing.T) {
 		Reply(201).
 		BodyString(`{"id": 1, "username": "dreamer"}`)
 
-	res, err := http.Post(fmt.Sprintf("%s/users", fakeService.Server.URL),
-		"application/json",
-		bytes.NewBuffer([]byte(`{"username": "dreamer"}`)))
+	sendBody := bytes.NewBuffer([]byte(`{"username": "dreamer"}`))
+	res, err := http.Post(fakeService.ResolveURL("/users"), "application/json", sendBody)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -2,7 +2,6 @@
 package examples
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -21,7 +20,7 @@ func TestSimpleGet(t *testing.T) {
 		Reply(200).
 		BodyString(`[{"username": "dreamer"}]`)
 
-	res, err := http.Get(fmt.Sprintf("%s/users", fakeService.Server.URL))
+	res, err := http.Get(fakeService.ResolveURL("/users"))
 	if err != nil {
 		t.Fatal(err)
 	}
