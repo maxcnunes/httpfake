@@ -1,5 +1,5 @@
 // Package httpfake provides a simple wrapper for httptest
-// with a handful chainable API for defining handlers to a fake server.
+// with a handful chainable API for setting up handlers to a fake server.
 // This package is aimed to be used in tests where the original external server
 // must not be reached. Instead is used in its place a fake server
 // which can be configured to handle any request as desired.
