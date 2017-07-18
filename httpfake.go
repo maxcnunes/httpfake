@@ -23,7 +23,11 @@ func New() *HTTPFake {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		respond(rh, w)
+		if rh.CustomHandle != nil {
+			rh.CustomHandle(w, r, rh)
+			return
+		}
+		Respond(w, r, rh)
 	}))
 
 	return fake
@@ -69,18 +73,4 @@ func (f *HTTPFake) findHandler(r *http.Request) *Request {
 		return founds[0]
 	}
 	return nil
-}
-
-func respond(rh *Request, w http.ResponseWriter) {
-	if rh.Response.StatusCode > 0 {
-		w.WriteHeader(rh.Response.StatusCode)
-	}
-	if len(rh.Response.BodyBuffer) > 0 {
-		w.Write(rh.Response.BodyBuffer) // nolint
-	}
-	if len(rh.Response.Header) > 0 {
-		for k := range rh.Response.Header {
-			w.Header().Add(k, rh.Response.Header.Get(k))
-		}
-	}
 }

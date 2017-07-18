@@ -7,9 +7,10 @@ import (
 
 // Request ...
 type Request struct {
-	Method   string
-	URL      *url.URL
-	Response *Response
+	Method       string
+	URL          *url.URL
+	Response     *Response
+	CustomHandle Responder
 }
 
 // NewRequest ...
@@ -53,6 +54,11 @@ func (r *Request) Head(path string) *Request {
 // Reply ...
 func (r *Request) Reply(status int) *Response {
 	return r.Response.Status(status)
+}
+
+// Handle ...
+func (r *Request) Handle(handle Responder) {
+	r.CustomHandle = handle
 }
 
 func (r *Request) method(method, path string) *Request {
