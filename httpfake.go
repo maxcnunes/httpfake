@@ -8,6 +8,7 @@ package httpfake
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 )
 
 // HTTPFake is the root struct for the fake server
@@ -60,17 +61,20 @@ func (f *HTTPFake) Reset() *HTTPFake {
 func (f *HTTPFake) findHandler(r *http.Request) *Request {
 	founds := []*Request{}
 	url := r.URL.String()
+	path := getURLPath(url)
 	for _, rh := range f.RequestHandlers {
 		if rh.Method != r.Method {
 			continue
 		}
 
-		if rh.URL.String() == url {
+		rhURL := rh.URL.String()
+		if rhURL == url {
 			return rh
 		}
+
 		// fallback if the income request has query strings
 		// and there is handlers only for the path
-		if rh.URL.EscapedPath() == r.URL.EscapedPath() {
+		if getURLPath(rhURL) == path {
 			founds = append(founds, rh)
 		}
 	}
@@ -79,4 +83,8 @@ func (f *HTTPFake) findHandler(r *http.Request) *Request {
 		return founds[0]
 	}
 	return nil
+}
+
+func getURLPath(url string) string {
+	return strings.Split(url, "?")[0]
 }
