@@ -23,7 +23,7 @@ test: test/unit
 
 ## Perform unit tests
 test/unit: test/check
-	@go test -v -cover $(TEST_PACKAGES)
+	@go test -v -coverpkg $(COVER_PACKAGES) -cover $(TEST_PACKAGES)
 
 test/coverage: test/check
 	@for d in ${TEST_PACKAGES}; do \
