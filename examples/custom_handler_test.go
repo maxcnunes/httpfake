@@ -19,8 +19,8 @@ func TestHandleCustomResponder(t *testing.T) {
 	fakeService.NewHandler().
 		Get("/users").
 		Handle(func(w http.ResponseWriter, r *http.Request, rh *httpfake.Request) {
-			w.WriteHeader(200)
 			w.Header().Add("Header-From-Custom-Responder-X", "indeed")
+			w.WriteHeader(200)
 			w.Write([]byte("Body-From-Custom-Responder-X")) // nolint
 		})
 
