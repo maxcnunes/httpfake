@@ -6,6 +6,7 @@
 package httpfake
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -48,8 +49,9 @@ func (f *HTTPFake) NewHandler() *Request {
 }
 
 // ResolveURL resolves the full URL to the fake server for a given path
-func (f *HTTPFake) ResolveURL(path string) string {
-	return f.Server.URL + path
+func (f *HTTPFake) ResolveURL(path string, args ...interface{}) string {
+	format := f.Server.URL + path
+	return fmt.Sprintf(format, args...)
 }
 
 // Reset wipes the request handlers definitions
