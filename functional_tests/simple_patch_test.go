@@ -1,7 +1,8 @@
 // nolint dupl
-package examples
+package functional_tests
 
 import (
+	"bytes"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -9,17 +10,19 @@ import (
 	"github.com/maxcnunes/httpfake"
 )
 
-// TestSimpleDelete tests a fake server handling a POST request
-func TestSimpleDelete(t *testing.T) {
+// TestSimplePatch tests a fake server handling a PATCH request
+func TestSimplePatch(t *testing.T) {
 	fakeService := httpfake.New()
 	defer fakeService.Server.Close()
 
 	// register a handler for our fake service
 	fakeService.NewHandler().
-		Delete("/users").
-		Reply(200)
+		Patch("/users/1").
+		Reply(200).
+		BodyString(`{"id": 1,"username": "dreamer"}`)
 
-	req, err := http.NewRequest("DELETE", fakeService.ResolveURL("/users"), nil)
+	sendBody := bytes.NewBuffer([]byte(`{"username": "dreamer"}`))
+	req, err := http.NewRequest("PATCH", fakeService.ResolveURL("/users/1"), sendBody)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,7 +40,7 @@ func TestSimpleDelete(t *testing.T) {
 	}
 
 	// Check the response body is what we expect
-	expected := ""
+	expected := `{"id": 1,"username": "dreamer"}`
 	body, _ := ioutil.ReadAll(res.Body)
 	if bodyString := string(body); bodyString != expected {
 		t.Errorf("request returned unexpected body: got %v want %v",

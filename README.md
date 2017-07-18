@@ -30,7 +30,7 @@ See [godoc reference](https://godoc.org/github.com/maxcnunes/httpfake) for detai
 
 ## Examples
 
-For a full list of examples please check out the [examples folder](/examples).
+For a full list of examples please check out the [functional_tests folder](/functional_tests).
 
 ```go
 // initialize the faker server

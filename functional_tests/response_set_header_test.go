@@ -1,5 +1,5 @@
 // nolint dupl
-package examples
+package functional_tests
 
 import (
 	"io/ioutil"
@@ -9,9 +9,9 @@ import (
 	"github.com/maxcnunes/httpfake"
 )
 
-// TestResponseAddHeader tests a fake server handling a GET request
+// TestResponseSetHeader tests a fake server handling a GET request
 // and responding with a speficied header
-func TestResponseAddHeader(t *testing.T) {
+func TestResponseSetHeader(t *testing.T) {
 	fakeService := httpfake.New()
 	defer fakeService.Server.Close()
 
@@ -19,7 +19,7 @@ func TestResponseAddHeader(t *testing.T) {
 	fakeService.NewHandler().
 		Get("/users").
 		Reply(200).
-		AddHeader("X-My-Header", "My Header value").
+		SetHeader("X-My-Header", "My Header value").
 		BodyString("[]")
 
 	req, err := http.NewRequest("GET", fakeService.ResolveURL("/users"), nil)

@@ -1,7 +1,8 @@
 // nolint dupl
-package examples
+package functional_tests
 
 import (
+	"bytes"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -9,31 +10,32 @@ import (
 	"github.com/maxcnunes/httpfake"
 )
 
-// TestSimpleGet tests a fake server handling a GET request
-func TestSimpleGet(t *testing.T) {
+// TestSimplePost tests a fake server handling a POST request
+func TestSimplePost(t *testing.T) {
 	fakeService := httpfake.New()
 	defer fakeService.Server.Close()
 
 	// register a handler for our fake service
 	fakeService.NewHandler().
-		Get("/users").
-		Reply(200).
-		BodyString(`[{"username": "dreamer"}]`)
+		Post("/users").
+		Reply(201).
+		BodyString(`{"id": 1, "username": "dreamer"}`)
 
-	res, err := http.Get(fakeService.ResolveURL("/users"))
+	sendBody := bytes.NewBuffer([]byte(`{"username": "dreamer"}`))
+	res, err := http.Post(fakeService.ResolveURL("/users"), "application/json", sendBody)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer res.Body.Close() // nolint errcheck
 
 	// Check the status code is what we expect
-	if status := res.StatusCode; status != 200 {
+	if status := res.StatusCode; status != 201 {
 		t.Errorf("request returned wrong status code: got %v want %v",
-			status, 200)
+			status, 201)
 	}
 
 	// Check the response body is what we expect
-	expected := `[{"username": "dreamer"}]`
+	expected := `{"id": 1, "username": "dreamer"}`
 	body, _ := ioutil.ReadAll(res.Body)
 	if bodyString := string(body); bodyString != expected {
 		t.Errorf("request returned unexpected body: got %v want %v",

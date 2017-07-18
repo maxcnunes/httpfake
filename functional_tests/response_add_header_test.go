@@ -1,5 +1,5 @@
 // nolint dupl
-package examples
+package functional_tests
 
 import (
 	"io/ioutil"
@@ -9,20 +9,18 @@ import (
 	"github.com/maxcnunes/httpfake"
 )
 
-// TestHandleCustomResponder tests a fake server handling a GET request
-// with a custom responder. It allows full control over the handler.
-func TestHandleCustomResponder(t *testing.T) {
+// TestResponseAddHeader tests a fake server handling a GET request
+// and responding with a speficied header
+func TestResponseAddHeader(t *testing.T) {
 	fakeService := httpfake.New()
 	defer fakeService.Server.Close()
 
 	// register a handler for our fake service
 	fakeService.NewHandler().
 		Get("/users").
-		Handle(func(w http.ResponseWriter, r *http.Request, rh *httpfake.Request) {
-			w.Header().Add("Header-From-Custom-Responder-X", "indeed")
-			w.WriteHeader(200)
-			w.Write([]byte("Body-From-Custom-Responder-X")) // nolint
-		})
+		Reply(200).
+		AddHeader("X-My-Header", "My Header value").
+		BodyString("[]")
 
 	req, err := http.NewRequest("GET", fakeService.ResolveURL("/users"), nil)
 	if err != nil {
@@ -42,7 +40,7 @@ func TestHandleCustomResponder(t *testing.T) {
 	}
 
 	// Check the response body is what we expect
-	expected := "Body-From-Custom-Responder-X"
+	expected := "[]"
 	body, _ := ioutil.ReadAll(res.Body)
 	if bodyString := string(body); bodyString != expected {
 		t.Errorf("request returned unexpected body: got %v want %v",
@@ -50,9 +48,9 @@ func TestHandleCustomResponder(t *testing.T) {
 	}
 
 	// Check the response header is what we expect
-	expected = "indeed"
-	if header := res.Header.Get("Header-From-Custom-Responder-X"); header != expected {
-		t.Errorf("request returned unexpected value for header Header-From-Custom-Responder-X: got %v want %v",
+	expected = "My Header value"
+	if header := res.Header.Get("X-My-Header"); header != expected {
+		t.Errorf("request returned unexpected value for header X-My-Header: got %v want %v",
 			header, expected)
 	}
 }

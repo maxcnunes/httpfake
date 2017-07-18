@@ -1,6 +1,6 @@
 TEST_PACKAGES := $(shell go list ./...)
 COVER_PACKAGES := $(shell go list ./... | paste -sd "," -)
-INVALID_EXAMPLES := $(shell ls ./examples | grep -cv _test.go)
+INVALID_FUNC_TESTS := $(shell ls ./functional_tests | grep -cv _test.go)
 
 install_gometalinter:
 	@go get -v github.com/alecthomas/gometalinter
@@ -40,7 +40,7 @@ test/coverage/publish:
 	@goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $$COVERALLS_TOKEN
 
 test/check:
-	@if [ "${INVALID_EXAMPLES}" -ge 1 ]; then \
-		echo "Folder 'examples' must contain only *_test.go files"; \
+	@if [ "${INVALID_FUNC_TESTS}" -ge 1 ]; then \
+		echo "Folder 'functional_tests' must contain only *_test.go files"; \
 		exit 1; \
 	fi

@@ -1,8 +1,7 @@
 // nolint dupl
-package examples
+package functional_tests
 
 import (
-	"bytes"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -10,24 +9,18 @@ import (
 	"github.com/maxcnunes/httpfake"
 )
 
-// TestSimplePut tests a fake server handling a POST request
-func TestSimplePut(t *testing.T) {
+// TestSimpleGet tests a fake server handling a GET request
+func TestSimpleGet(t *testing.T) {
 	fakeService := httpfake.New()
 	defer fakeService.Server.Close()
 
 	// register a handler for our fake service
 	fakeService.NewHandler().
-		Put("/users/1").
+		Get("/users").
 		Reply(200).
-		BodyString(`{"id": 1,"username": "dreamer"}`)
+		BodyString(`[{"username": "dreamer"}]`)
 
-	sendBody := bytes.NewBuffer([]byte(`{"username": "dreamer"}`))
-	req, err := http.NewRequest("PUT", fakeService.ResolveURL("/users/1"), sendBody)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	res, err := http.DefaultClient.Do(req)
+	res, err := http.Get(fakeService.ResolveURL("/users"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -40,7 +33,7 @@ func TestSimplePut(t *testing.T) {
 	}
 
 	// Check the response body is what we expect
-	expected := `{"id": 1,"username": "dreamer"}`
+	expected := `[{"username": "dreamer"}]`
 	body, _ := ioutil.ReadAll(res.Body)
 	if bodyString := string(body); bodyString != expected {
 		t.Errorf("request returned unexpected body: got %v want %v",
