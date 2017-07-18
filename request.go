@@ -60,7 +60,7 @@ func (r *Request) Handle(handle Responder) {
 }
 
 // Reply sets a response status for this request
-// And returns the Reponse struct to allow chaining the response settings
+// And returns the Response struct to allow chaining the response settings
 func (r *Request) Reply(status int) *Response {
 	return r.Response.Status(status)
 }
