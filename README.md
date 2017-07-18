@@ -23,6 +23,9 @@ govendor fetch github.com/maxcnunes/httpfake
 
 > If possible give preference for using vendor. This way the version is locked up as a dependency in your project.
 
+## Changelog
+
+See [Releases](https://github.com/maxcnunes/httpfake/releases) for detailed history changes.
 
 ## API
 
