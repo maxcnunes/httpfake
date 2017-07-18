@@ -2,10 +2,10 @@ package httpfake
 
 import "net/http"
 
-// Responder ...
+// Responder are callbacks to handle the request and write the response
 type Responder func(w http.ResponseWriter, r *http.Request, rh *Request)
 
-// Respond ...
+// Respond writes the response based in the request handler settings
 func Respond(w http.ResponseWriter, r *http.Request, rh *Request) {
 	if len(rh.Response.Header) > 0 {
 		for k := range rh.Response.Header {

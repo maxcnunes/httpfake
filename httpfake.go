@@ -1,3 +1,8 @@
+// Package httpfake provides a simple wrapper for httptest
+// with a handful chainable API for defining handlers to a fake server.
+// This package is aimed to be used in tests where the original external server
+// must not be reached. Instead is used in its place a fake server
+// which can be configured to handle any request as desired.
 package httpfake
 
 import (
@@ -5,13 +10,14 @@ import (
 	"net/http/httptest"
 )
 
-// HTTPFake ...
+// HTTPFake is the root struct for the fake server
 type HTTPFake struct {
 	Server          *httptest.Server
 	RequestHandlers []*Request
 }
 
-// New ...
+// New starts a httptest.Server as the fake server
+// and sets up the initial configuration to this server's request handlers
 func New() *HTTPFake {
 	fake := &HTTPFake{
 		RequestHandlers: []*Request{},
@@ -33,7 +39,7 @@ func New() *HTTPFake {
 	return fake
 }
 
-// NewHandler ...
+// NewHandler initializes the configuration for a new request handler
 func (f *HTTPFake) NewHandler() *Request {
 	rh := NewRequest()
 	f.RequestHandlers = append(f.RequestHandlers, rh)
@@ -45,7 +51,7 @@ func (f *HTTPFake) ResolveURL(path string) string {
 	return f.Server.URL + path
 }
 
-// Reset ...
+// Reset wipes the request handlers definitions
 func (f *HTTPFake) Reset() *HTTPFake {
 	f.RequestHandlers = []*Request{}
 	return f
