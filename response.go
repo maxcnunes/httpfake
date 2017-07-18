@@ -28,6 +28,12 @@ func (r *Response) SetHeader(key, value string) *Response {
 	return r
 }
 
+// AddHeader ...
+func (r *Response) AddHeader(key, value string) *Response {
+	r.Header.Add(key, value)
+	return r
+}
+
 // BodyString ...
 func (r *Response) BodyString(body string) *Response {
 	r.BodyBuffer = []byte(body)
