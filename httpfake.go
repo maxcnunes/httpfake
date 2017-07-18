@@ -78,4 +78,9 @@ func respond(rh *Request, w http.ResponseWriter) {
 	if len(rh.Response.BodyBuffer) > 0 {
 		w.Write(rh.Response.BodyBuffer) // nolint
 	}
+	if len(rh.Response.Header) > 0 {
+		for k := range rh.Response.Header {
+			w.Header().Add(k, rh.Response.Header.Get(k))
+		}
+	}
 }

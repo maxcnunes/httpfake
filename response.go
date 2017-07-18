@@ -1,19 +1,30 @@
 package httpfake
 
+import "net/http"
+
 // Response ...
 type Response struct {
 	StatusCode int
 	BodyBuffer []byte
+	Header     http.Header
 }
 
 // NewResponse ...
 func NewResponse() *Response {
-	return &Response{}
+	return &Response{
+		Header: make(http.Header),
+	}
 }
 
 // Status ...
 func (r *Response) Status(status int) *Response {
 	r.StatusCode = status
+	return r
+}
+
+// SetHeader ...
+func (r *Response) SetHeader(key, value string) *Response {
+	r.Header.Set(key, value)
 	return r
 }
 
