@@ -45,7 +45,7 @@ fakeService.NewHandler().
   BodyString(`[{"username": "dreamer"}]`)
 
 // run a real http request to that server
-res, err := http.Get(fmt.Sprintf("%s/users", fakeService.Server.URL))
+res, err := http.Get(fakeService.ResolveURL("/users"))
 ```
 
 ## Reference
