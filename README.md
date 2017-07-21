@@ -1,6 +1,8 @@
 httpfake
 ========
 
+<img align="right" width="125px" src="https://raw.githubusercontent.com/maxcnunes/httpfake/master/logo/gopher-httpfake.png">
+
 [![LICENSE](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 [![Godocs](https://img.shields.io/badge/golang-documentation-blue.svg)](https://godoc.org/github.com/maxcnunes/httpfake)
 [![Build Status](https://travis-ci.org/maxcnunes/httpfake.svg?branch=master)](https://travis-ci.org/maxcnunes/httpfake)
