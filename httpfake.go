@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	netURL "net/url"
 	"strings"
 )
 
@@ -69,7 +70,7 @@ func (f *HTTPFake) findHandler(r *http.Request) *Request {
 			continue
 		}
 
-		rhURL := rh.URL.String()
+		rhURL, _ := netURL.QueryUnescape(rh.URL.String())
 		if rhURL == url {
 			return rh
 		}
