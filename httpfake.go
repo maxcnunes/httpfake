@@ -29,6 +29,14 @@ func New() *HTTPFake {
 	fake.Server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		rh := fake.findHandler(r)
 		if rh == nil {
+			errMsg := fmt.Sprintf(
+				"not found request handler for [%s: %s]; registered handlers are:\n",
+				r.Method, r.URL,
+			)
+			for _, frh := range fake.RequestHandlers {
+				errMsg += fmt.Sprintf("* [%s: %s]\n", frh.Method, frh.URL.Path)
+			}
+			printError(errMsg)
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
@@ -90,4 +98,8 @@ func (f *HTTPFake) findHandler(r *http.Request) *Request {
 
 func getURLPath(url string) string {
 	return strings.Split(url, "?")[0]
+}
+
+func printError(msg string) {
+	fmt.Println("\033[0;31mhttpfake: " + msg + "\033[0m")
 }
