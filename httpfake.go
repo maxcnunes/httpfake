@@ -27,7 +27,13 @@ func New() *HTTPFake {
 	}
 
 	fake.Server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		rh := fake.findHandler(r)
+		rh, err := fake.findHandler(r)
+		if err != nil {
+			printError(fmt.Sprintf("error finding handler: %v", err))
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
 		if rh == nil {
 			errMsg := fmt.Sprintf(
 				"not found request handler for [%s: %s]; registered handlers are:\n",
@@ -40,10 +46,12 @@ func New() *HTTPFake {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
+
 		if rh.CustomHandle != nil {
 			rh.CustomHandle(w, r, rh)
 			return
 		}
+
 		Respond(w, r, rh)
 	}))
 
@@ -69,7 +77,7 @@ func (f *HTTPFake) Reset() *HTTPFake {
 	return f
 }
 
-func (f *HTTPFake) findHandler(r *http.Request) *Request {
+func (f *HTTPFake) findHandler(r *http.Request) (*Request, error) {
 	founds := []*Request{}
 	url := r.URL.String()
 	path := getURLPath(url)
@@ -78,9 +86,13 @@ func (f *HTTPFake) findHandler(r *http.Request) *Request {
 			continue
 		}
 
-		rhURL, _ := netURL.QueryUnescape(rh.URL.String())
+		rhURL, err := netURL.QueryUnescape(rh.URL.String())
+		if err != nil {
+			return nil, err
+		}
+
 		if rhURL == url {
-			return rh
+			return rh, nil
 		}
 
 		// fallback if the income request has query strings
@@ -91,9 +103,10 @@ func (f *HTTPFake) findHandler(r *http.Request) *Request {
 	}
 	// only use the fallback if could find only one match
 	if len(founds) == 1 {
-		return founds[0]
+		return founds[0], nil
 	}
-	return nil
+
+	return nil, nil
 }
 
 func getURLPath(url string) string {
