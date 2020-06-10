@@ -9,7 +9,7 @@ import (
 	"github.com/maxcnunes/httpfake"
 )
 
-// TestSimpleGet tests a fake server handling a GET request
+// TestSimpleGetWithTesting tests a fake server handling a GET request
 func TestSimpleGetWithTesting(t *testing.T) {
 	fakeService := httpfake.New(httpfake.WithTesting(t))
 	defer fakeService.Close()
