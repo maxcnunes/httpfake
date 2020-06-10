@@ -17,7 +17,7 @@ func TestSimplePutWithTesting(t *testing.T) {
 
 	// register a handler for our fake service
 	fakeService.NewHandler().
-		Put("/users/1&").
+		Put("/users/1").
 		AssertBody([]byte(`{"username": "dreamer"}`)).
 		Reply(200).
 		BodyString(`{"id": 1,"username": "dreamer"}`)

@@ -89,31 +89,31 @@ func (r *Request) runAssertions(t *testing.T, testReq *http.Request) {
 
 // AssertQueries will assert that the provided query parameters are present in the requests to this handler
 func (r *Request) AssertQueries(key ...string) *Request {
-	r.assertions = append(r.assertions, &RequiredQueries{Keys: key})
+	r.assertions = append(r.assertions, &requiredQueries{Keys: key})
 	return r
 }
 
 // AssertQueryValue will assert that the provided query parameter and value are present in the requests to this handler
 func (r *Request) AssertQueryValue(key, value string) *Request {
-	r.assertions = append(r.assertions, &RequiredQueryValue{Key: key, ExpectedValue: value})
+	r.assertions = append(r.assertions, &requiredQueryValue{Key: key, ExpectedValue: value})
 	return r
 }
 
 // AssertHeaders will assert that the provided header keys are present in the requests to this handler
 func (r *Request) AssertHeaders(keys ...string) *Request {
-	r.assertions = append(r.assertions, &RequiredHeaders{Keys: keys})
+	r.assertions = append(r.assertions, &requiredHeaders{Keys: keys})
 	return r
 }
 
 // AssertHeaderValue will assert that the provided header key and value are present in the requests to this handler
 func (r *Request) AssertHeaderValue(key, value string) *Request {
-	r.assertions = append(r.assertions, &RequiredHeaderValue{Key: key, ExpectedValue: value})
+	r.assertions = append(r.assertions, &requiredHeaderValue{Key: key, ExpectedValue: value})
 	return r
 }
 
 // AssertBody will assert that that the provided body matches in the requests to this handler
 func (r *Request) AssertBody(body []byte) *Request {
-	r.assertions = append(r.assertions, &RequiredBody{ExpectedBody: body})
+	r.assertions = append(r.assertions, &requiredBody{ExpectedBody: body})
 	return r
 }
 
