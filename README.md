@@ -33,6 +33,28 @@ See [Releases](https://github.com/maxcnunes/httpfake/releases) for detailed hist
 
 See [godoc reference](https://godoc.org/github.com/maxcnunes/httpfake) for detailed API documentation.
 
+## Assertions
+
+There are built-in methods you can use to make assertions about requests to your HTTP handlers. The currently
+supported assertions are:
+
+* Presence of query parameters
+* Query parameter and its expected value
+* Presence of HTTP headers
+* HTTP header and its expected value
+* The expected body of your request
+
+[WithTesting](https://godoc.org/github.com/maxcnunes/httpfake#WithTesting) **must** be provided as a server
+option when creating the test server if intend to set request assertions. Failing to set the option
+when using request assertions will result in a panic.
+
+### Custom Assertions
+
+You can also provide your own request assertions by creating a type that implements the
+[Assertor interface](https://godoc.org/github.com/maxcnunes/httpfake#Assertor). The `Assertor.Log` method will be
+called for each assertion before it's processed. The `Assertor.Error` method will only be called if the
+`Assertor.Assert` method returns an error.
+
 ## Examples
 
 For a full list of examples please check out the [functional_tests folder](/functional_tests).
