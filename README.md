@@ -84,4 +84,4 @@ See the [Contributing guide](/CONTRIBUTING.md) for steps on how to contribute to
 
 ## Reference
 
-This package was heavily inspired by [gock](https://github.com/h2non/gock). Check that you if you prefer mocking your requests.
+This package was heavily inspired on [gock](https://github.com/h2non/gock). Check that you if you prefer mocking your requests.
