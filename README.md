@@ -66,7 +66,7 @@ fakeService := httpfake.New()
 
 // bring down the server once we
 // finish running our tests
-defer fakeService.Server.Close()
+defer fakeService.Close()
 
 // register a handler for our fake service
 fakeService.NewHandler().
