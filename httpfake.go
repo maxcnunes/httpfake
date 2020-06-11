@@ -11,21 +11,46 @@ import (
 	"net/http/httptest"
 	netURL "net/url"
 	"strings"
+	"testing"
 )
 
 // HTTPFake is the root struct for the fake server
 type HTTPFake struct {
 	Server          *httptest.Server
 	RequestHandlers []*Request
+	t               *testing.T
+}
+
+// ServerOption provides a functional signature for providing configuration options to the fake server
+type ServerOption func(opts *ServerOptions)
+
+// ServerOptions a configuration object for the fake test server
+type ServerOptions struct {
+	t *testing.T
+}
+
+// WithTesting returns a configuration function that allows you to configure the testing object on the fake server.
+// The testing object is utilized for assertions set on the request object and will throw a testing error if an
+// endpoint is not called.
+func WithTesting(t *testing.T) ServerOption {
+	return func(opts *ServerOptions) {
+		opts.t = t
+	}
 }
 
 // New starts a httptest.Server as the fake server
 // and sets up the initial configuration to this server's request handlers
-func New() *HTTPFake {
+func New(opts ...ServerOption) *HTTPFake {
 	fake := &HTTPFake{
 		RequestHandlers: []*Request{},
 	}
 
+	var serverOpts ServerOptions
+	for _, opt := range opts {
+		opt(&serverOpts)
+	}
+
+	fake.t = serverOpts.t
 	fake.Server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		rh, err := fake.findHandler(r)
 		if err != nil {
@@ -45,6 +70,17 @@ func New() *HTTPFake {
 			printError(errMsg)
 			w.WriteHeader(http.StatusNotFound)
 			return
+		}
+
+		rh.called++
+
+		if rh.assertions != nil {
+			if fake.t == nil {
+				errMsg := fmt.Sprintf("setup error: \"WithTesting\" is required when assertions are set")
+				panic(errMsg)
+			}
+
+			rh.runAssertions(fake.t, r)
 		}
 
 		if rh.CustomHandle != nil {
@@ -75,6 +111,21 @@ func (f *HTTPFake) ResolveURL(path string, args ...interface{}) string {
 func (f *HTTPFake) Reset() *HTTPFake {
 	f.RequestHandlers = []*Request{}
 	return f
+}
+
+// Close shuts down the HTTP Test server, this will block until all outstanding requests on the server have completed.
+// If the WithTesting option was specified when setting up the server Close will assert that each http handler
+// specified for this server was called
+func (f *HTTPFake) Close() {
+	defer f.Server.Close()
+
+	if f.t != nil {
+		for _, reqHandler := range f.RequestHandlers {
+			if reqHandler.called == 0 {
+				f.t.Errorf("httpfake: request handler was specified but not called %s", reqHandler.URL.Path)
+			}
+		}
+	}
 }
 
 func (f *HTTPFake) findHandler(r *http.Request) (*Request, error) {

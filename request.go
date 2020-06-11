@@ -1,8 +1,10 @@
 package httpfake
 
 import (
+	"net/http"
 	"net/url"
 	"strings"
+	"testing"
 )
 
 // Request stores the settings for a request handler
@@ -13,6 +15,8 @@ type Request struct {
 	URL          *url.URL
 	Response     *Response
 	CustomHandle Responder
+	assertions   []Assertor
+	called       int
 }
 
 // NewRequest creates a new Request
@@ -20,6 +24,7 @@ func NewRequest() *Request {
 	return &Request{
 		URL:      &url.URL{},
 		Response: NewResponse(),
+		called:   0,
 	}
 }
 
@@ -70,5 +75,50 @@ func (r *Request) method(method, path string) *Request {
 		r.URL.Path = path
 	}
 	r.Method = strings.ToUpper(method)
+	return r
+}
+
+func (r *Request) runAssertions(t *testing.T, testReq *http.Request) {
+	for _, assertor := range r.assertions {
+		assertor.Log(t)
+		if err := assertor.Assert(testReq); err != nil {
+			assertor.Error(t, err)
+		}
+	}
+}
+
+// AssertQueries will assert that the provided query parameters are present in the requests to this handler
+func (r *Request) AssertQueries(key ...string) *Request {
+	r.assertions = append(r.assertions, &requiredQueries{Keys: key})
+	return r
+}
+
+// AssertQueryValue will assert that the provided query parameter and value are present in the requests to this handler
+func (r *Request) AssertQueryValue(key, value string) *Request {
+	r.assertions = append(r.assertions, &requiredQueryValue{Key: key, ExpectedValue: value})
+	return r
+}
+
+// AssertHeaders will assert that the provided header keys are present in the requests to this handler
+func (r *Request) AssertHeaders(keys ...string) *Request {
+	r.assertions = append(r.assertions, &requiredHeaders{Keys: keys})
+	return r
+}
+
+// AssertHeaderValue will assert that the provided header key and value are present in the requests to this handler
+func (r *Request) AssertHeaderValue(key, value string) *Request {
+	r.assertions = append(r.assertions, &requiredHeaderValue{Key: key, ExpectedValue: value})
+	return r
+}
+
+// AssertBody will assert that that the provided body matches in the requests to this handler
+func (r *Request) AssertBody(body []byte) *Request {
+	r.assertions = append(r.assertions, &requiredBody{ExpectedBody: body})
+	return r
+}
+
+// AssertCustom will run the provided assertor against requests to this handler
+func (r *Request) AssertCustom(assertor Assertor) *Request {
+	r.assertions = append(r.assertions, assertor)
 	return r
 }
