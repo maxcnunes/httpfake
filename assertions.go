@@ -70,7 +70,7 @@ func (h *requiredHeaderValue) Assert(r *http.Request) error {
 
 // Log prints a testing info log for the requiredHeaderValue Assertor
 func (h *requiredHeaderValue) Log(t testing.TB) {
-	t.Logf("Testing request for required header value [%s: %s]", h.Key, h.ExpectedValue)
+	t.Logf("Testing request for a required header value [%s: %s]", h.Key, h.ExpectedValue)
 }
 
 // Error prints a testing error for the requiredHeaderValue Assertor
@@ -126,7 +126,7 @@ func (q *requiredQueryValue) Assert(r *http.Request) error {
 
 // Log prints a testing info log for the requiredQueryValue Assertor
 func (q *requiredQueryValue) Log(t testing.TB) {
-	t.Logf("Testing request for required query parameter value [%s: %s]", q.Key, q.ExpectedValue)
+	t.Logf("Testing request for a required query parameter value [%s: %s]", q.Key, q.ExpectedValue)
 }
 
 // Error prints a testing error for the requiredQueryValue Assertor
@@ -147,7 +147,7 @@ func (b *requiredBody) Assert(r *http.Request) error {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		return fmt.Errorf("error reading the request body: %w", err)
+		return fmt.Errorf("error reading the request body: %s", err.Error())
 	}
 
 	if !bytes.EqualFold(b.ExpectedBody, body) {
@@ -161,7 +161,7 @@ func (b *requiredBody) Assert(r *http.Request) error {
 
 // Log prints a testing info log for the requiredBody Assertor
 func (b *requiredBody) Log(t testing.TB) {
-	t.Log("Testing request for required a required body")
+	t.Log("Testing request for a required body value")
 }
 
 // Error prints a testing error for the requiredBody Assertor
