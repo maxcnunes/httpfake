@@ -315,7 +315,7 @@ func TestAssertors_Log(t *testing.T) {
 				buf: &bytes.Buffer{},
 			},
 			assertor: &requiredHeaderValue{Key: "test-key", ExpectedValue: "test-value"},
-			expected: "Testing request for required header value [test-key: test-value]",
+			expected: "Testing request for a required header value [test-key: test-value]",
 		},
 		{
 			name: "requiredQueries Log should log the expected output when called",
@@ -331,7 +331,7 @@ func TestAssertors_Log(t *testing.T) {
 				buf: &bytes.Buffer{},
 			},
 			assertor: &requiredQueryValue{Key: "test-key", ExpectedValue: "test-value"},
-			expected: "Testing request for required query parameter value [test-key: test-value]",
+			expected: "Testing request for a required query parameter value [test-key: test-value]",
 		},
 		{
 			name: "requiredBody Log should log the expected output when called",
@@ -339,7 +339,7 @@ func TestAssertors_Log(t *testing.T) {
 				buf: &bytes.Buffer{},
 			},
 			assertor: &requiredBody{},
-			expected: "Testing request for required a required body\n",
+			expected: "Testing request for a required body value\n",
 		},
 	}
 	for _, tt := range tests {
