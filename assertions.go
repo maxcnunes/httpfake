@@ -147,7 +147,7 @@ func (b *requiredBody) Assert(r *http.Request) error {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		return fmt.Errorf("error reading the request body: %w", err)
+		return fmt.Errorf("error reading the request body: %s", err.Error())
 	}
 
 	if !bytes.EqualFold(b.ExpectedBody, body) {
