@@ -45,13 +45,14 @@ supported assertions are:
 * The expected body of your request
 
 [WithTesting](https://godoc.org/github.com/maxcnunes/httpfake#WithTesting) **must** be provided as a server
-option when creating the test server if intend to set request assertions. Failing to set the option
+option when creating the test server if you intend to set request assertions. Failing to set the option
 when using request assertions will result in a panic.
 
 ### Custom Assertions
 
-You can also provide your own request assertions by creating a type that implements the
-[Assertor interface](https://godoc.org/github.com/maxcnunes/httpfake#Assertor). The `Assertor.Log` method will be
+You can also provide your own assertions by creating a type that implements the
+[Assertor interface](https://godoc.org/github.com/maxcnunes/httpfake#Assertor) or utilizing the
+[CustomAssertor function type](https://pkg.go.dev/github.com/maxcnunes/httpfake#CustomAssertor). The `Assertor.Log` method will be
 called for each assertion before it's processed. The `Assertor.Error` method will only be called if the
 `Assertor.Assert` method returns an error.
 
