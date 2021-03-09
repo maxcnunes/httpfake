@@ -168,3 +168,22 @@ func (b *requiredBody) Log(t testing.TB) {
 func (b *requiredBody) Error(t testing.TB, err error) {
 	t.Errorf(assertErrorTemplate, err)
 }
+
+// CustomAssertor provides a function signature that implements the Assertor interface. This allows for
+// adhoc creation of a custom assertion for use with the AssertCustom assertor.
+type CustomAssertor func(r *http.Request) error
+
+// Assert runs the CustomAssertor assertion against the provided request
+func (c CustomAssertor) Assert(r *http.Request) error {
+	return c(r)
+}
+
+// Log prints a testing info log for the CustomAssertor
+func (c CustomAssertor) Log(t testing.TB) {
+	t.Log("Testing request with a custom assertor")
+}
+
+// Error prints a testing error for the CustomAssertor
+func (c CustomAssertor) Error(t testing.TB, err error) {
+	t.Errorf(assertErrorTemplate, err)
+}

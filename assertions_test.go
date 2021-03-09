@@ -266,6 +266,36 @@ func TestAssertors_Assert(t *testing.T) {
 			},
 			expectedErr: "error reading the request body; the request body is nil",
 		},
+		{
+			name: "CustomAssertor should execute the custom assertor as expected",
+			assertor: CustomAssertor(func(r *http.Request) error {
+				return nil
+			}),
+			requestBuilder: func() (*http.Request, error) {
+				testReq, err := http.NewRequest(http.MethodGet, "http://fake.url", nil)
+				if err != nil {
+					return nil, err
+				}
+
+				return testReq, nil
+			},
+			expectedErr: "",
+		},
+		{
+			name: "CustomAssertor should execute the custom assertor and return an error as expected",
+			assertor: CustomAssertor(func(r *http.Request) error {
+				return errors.New("custom assertor error")
+			}),
+			requestBuilder: func() (*http.Request, error) {
+				testReq, err := http.NewRequest(http.MethodGet, "http://fake.url", nil)
+				if err != nil {
+					return nil, err
+				}
+
+				return testReq, nil
+			},
+			expectedErr: "custom assertor error",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -341,6 +371,16 @@ func TestAssertors_Log(t *testing.T) {
 			assertor: &requiredBody{},
 			expected: "Testing request for a required body value\n",
 		},
+		{
+			name: "CustomAssertor Log should log the expected output when called",
+			mockTester: &mockTester{
+				buf: &bytes.Buffer{},
+			},
+			assertor: CustomAssertor(func(r *http.Request) error {
+				return nil
+			}),
+			expected: "Testing request with a custom assertor\n",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -399,6 +439,16 @@ func TestAssertors_Error(t *testing.T) {
 				buf: &bytes.Buffer{},
 			},
 			assertor: &requiredBody{},
+			expected: "assertion error: test error",
+		},
+		{
+			name: "CustomAssertor Log should log the expected output when called",
+			mockTester: &mockTester{
+				buf: &bytes.Buffer{},
+			},
+			assertor: CustomAssertor(func(r *http.Request) error {
+				return nil
+			}),
 			expected: "assertion error: test error",
 		},
 	}
