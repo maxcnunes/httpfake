@@ -18,7 +18,7 @@ import (
 type HTTPFake struct {
 	Server          *httptest.Server
 	RequestHandlers []*Request
-	t               *testing.T
+	t               testing.TB
 }
 
 // ServerOption provides a functional signature for providing configuration options to the fake server
@@ -26,13 +26,13 @@ type ServerOption func(opts *ServerOptions)
 
 // ServerOptions a configuration object for the fake test server
 type ServerOptions struct {
-	t *testing.T
+	t testing.TB
 }
 
 // WithTesting returns a configuration function that allows you to configure the testing object on the fake server.
 // The testing object is utilized for assertions set on the request object and will throw a testing error if an
 // endpoint is not called.
-func WithTesting(t *testing.T) ServerOption {
+func WithTesting(t testing.TB) ServerOption {
 	return func(opts *ServerOptions) {
 		opts.t = t
 	}

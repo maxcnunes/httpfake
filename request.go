@@ -78,7 +78,7 @@ func (r *Request) method(method, path string) *Request {
 	return r
 }
 
-func (r *Request) runAssertions(t *testing.T, testReq *http.Request) {
+func (r *Request) runAssertions(t testing.TB, testReq *http.Request) {
 	for _, assertor := range r.assertions {
 		assertor.Log(t)
 		if err := assertor.Assert(testReq); err != nil {
