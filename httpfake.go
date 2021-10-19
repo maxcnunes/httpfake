@@ -72,7 +72,9 @@ func New(opts ...ServerOption) *HTTPFake {
 			return
 		}
 
+		rh.Lock()
 		rh.called++
+		rh.Unlock()
 
 		if rh.assertions != nil {
 			if fake.t == nil {

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -11,6 +12,7 @@ import (
 // Such as how to match this handler for the incoming requests
 // And how this request will respond back
 type Request struct {
+	sync.Mutex
 	Method       string
 	URL          *url.URL
 	Response     *Response
