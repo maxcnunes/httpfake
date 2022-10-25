@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	netURL "net/url"
 	"strings"
 	"testing"
 )
@@ -139,18 +138,13 @@ func (f *HTTPFake) findHandler(r *http.Request) (*Request, error) {
 			continue
 		}
 
-		rhURL, err := netURL.QueryUnescape(rh.URL.String())
-		if err != nil {
-			return nil, err
-		}
-
-		if rhURL == url {
+		if rh.URL.String() == url {
 			return rh, nil
 		}
 
 		// fallback if the income request has query strings
 		// and there is handlers only for the path
-		if getURLPath(rhURL) == path {
+		if rh.URL.Path == path {
 			founds = append(founds, rh)
 		}
 	}

@@ -74,7 +74,12 @@ func (r *Request) Reply(status int) *Response {
 
 func (r *Request) method(method, path string) *Request {
 	if path != "/" {
-		r.URL.Path = path
+		u, err := url.Parse(path)
+		if err != nil {
+			panic(err)
+		}
+
+		r.URL = u
 	}
 	r.Method = strings.ToUpper(method)
 	return r
