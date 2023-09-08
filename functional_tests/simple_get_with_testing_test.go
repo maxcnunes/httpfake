@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/maxcnunes/httpfake"
+	"github.com/voronelf/httpfake"
 )
 
 // TestSimpleGetWithTesting tests a fake server handling a GET request

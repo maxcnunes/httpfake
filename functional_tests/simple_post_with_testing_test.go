@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/maxcnunes/httpfake"
+	"github.com/voronelf/httpfake"
 )
 
 // TestSimplePostWithTesting tests a fake server handling a POST request

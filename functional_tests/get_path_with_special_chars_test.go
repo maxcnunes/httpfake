@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/maxcnunes/httpfake"
+	"github.com/voronelf/httpfake"
 )
 
 // TestGetPathWithSpecialChars tests a fake server handling a request with special chars in path and query
