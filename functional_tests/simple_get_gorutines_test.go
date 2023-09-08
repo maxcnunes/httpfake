@@ -7,7 +7,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/maxcnunes/httpfake"
+	"github.com/voronelf/httpfake"
 )
 
 // TestSimpleGetWithRutines tests a fake server handling a GET request
