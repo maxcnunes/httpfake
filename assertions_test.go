@@ -296,6 +296,62 @@ func TestAssertors_Assert(t *testing.T) {
 			},
 			expectedErr: "custom assertor error",
 		},
+		{
+			name: "subJSON should return an error when the necessary fields are not present",
+			assertor: &subJSON{necessaryFields: map[string]any{
+				"field1":                     float64(101),
+				"subfield1.field1":           "101",
+				"subfield1.subfield2.field1": true,
+			},
+			},
+			requestBuilder: func() (*http.Request, error) {
+				const body = `{
+								  "field1": 101,
+								  "subfield1": {
+									"field1": "101",
+									"subfield2": {
+									  "field1": true
+									}
+								  }
+								}`
+
+				testReq, err := http.NewRequest(http.MethodGet, "http://fake.url", bytes.NewBuffer([]byte(body)))
+				if err != nil {
+					return nil, err
+				}
+
+				return testReq, nil
+			},
+			expectedErr: "",
+		},
+		{
+			name: "subJSON should return an error when the necessary fields are not present",
+			assertor: &subJSON{necessaryFields: map[string]any{
+				"field1":                     float64(101),
+				"subfield1.field1":           "101",
+				"subfield1.subfield2.field1": true,
+			},
+			},
+			requestBuilder: func() (*http.Request, error) {
+				const body = `{
+								  "field1": 101,
+								  "subfield1": {
+									"field1": "505",
+									"subfield2": {
+									  "field1": true
+									}
+								  }
+								}`
+
+				testReq, err := http.NewRequest(http.MethodGet, "http://fake.url", bytes.NewBuffer([]byte(body)))
+				if err != nil {
+					return nil, err
+				}
+
+				return testReq, nil
+			},
+			expectedErr: `json assertion failed for "subfield1.field1" field: expected "101", got "505"`,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -381,6 +437,14 @@ func TestAssertors_Log(t *testing.T) {
 			}),
 			expected: "Testing request with a custom assertor\n",
 		},
+		{
+			name: "SubJSON Log should log the expected output when called",
+			mockTester: &mockTester{
+				buf: &bytes.Buffer{},
+			},
+			assertor: &subJSON{},
+			expected: "Testing request for a required json fields\n",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -449,6 +513,14 @@ func TestAssertors_Error(t *testing.T) {
 			assertor: CustomAssertor(func(r *http.Request) error {
 				return nil
 			}),
+			expected: "assertion error: test error",
+		},
+		{
+			name: "SubJSON Log should log the expected output when called",
+			mockTester: &mockTester{
+				buf: &bytes.Buffer{},
+			},
+			assertor: &subJSON{},
 			expected: "assertion error: test error",
 		},
 	}
