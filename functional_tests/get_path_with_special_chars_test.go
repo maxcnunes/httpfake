@@ -9,25 +9,18 @@ import (
 	"github.com/voronelf/httpfake"
 )
 
-// TestResponseSetHeader tests a fake server handling a GET request
-// and responding with a speficied header
-func TestResponseSetHeader(t *testing.T) {
+// TestGetPathWithSpecialChars tests a fake server handling a request with special chars in path and query
+func TestGetPathWithSpecialChars(t *testing.T) {
 	fakeService := httpfake.New()
 	defer fakeService.Server.Close()
 
 	// register a handler for our fake service
 	fakeService.NewHandler().
-		Get("/users").
+		Get("/user/+79998887766").
 		Reply(200).
-		SetHeader("X-My-Header", "My Header value").
-		BodyString("[]")
+		BodyString(`[{"username": "dreamer"}]`)
 
-	req, err := http.NewRequest("GET", fakeService.ResolveURL("/users"), nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	res, err := http.DefaultClient.Do(req)
+	res, err := http.Get(fakeService.ResolveURL("/user/+79998887766"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -40,17 +33,10 @@ func TestResponseSetHeader(t *testing.T) {
 	}
 
 	// Check the response body is what we expect
-	expected := "[]"
+	expected := `[{"username": "dreamer"}]`
 	body, _ := ioutil.ReadAll(res.Body)
 	if bodyString := string(body); bodyString != expected {
 		t.Errorf("request returned unexpected body: got %v want %v",
 			bodyString, expected)
-	}
-
-	// Check the response header is what we expect
-	expected = "My Header value"
-	if header := res.Header.Get("X-My-Header"); header != expected {
-		t.Errorf("request returned unexpected value for header X-My-Header: got %v want %v",
-			header, expected)
 	}
 }

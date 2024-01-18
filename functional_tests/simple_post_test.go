@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/maxcnunes/httpfake"
+	"github.com/voronelf/httpfake"
 )
 
 // TestSimplePost tests a fake server handling a POST request

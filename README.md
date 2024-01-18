@@ -4,34 +4,34 @@ httpfake
 <img align="right" width="125px" src="https://raw.githubusercontent.com/maxcnunes/httpfake/master/logo/gopher-httpfake.png">
 
 [![LICENSE](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
-[![Godocs](https://img.shields.io/badge/golang-documentation-blue.svg)](https://godoc.org/github.com/maxcnunes/httpfake)
+[![Godocs](https://img.shields.io/badge/golang-documentation-blue.svg)](https://godoc.org/github.com/voronelf/httpfake)
 [![Build Status](https://travis-ci.org/maxcnunes/httpfake.svg?branch=master)](https://travis-ci.org/maxcnunes/httpfake)
 [![Coverage Status](https://coveralls.io/repos/github/maxcnunes/httpfake/badge.svg?branch=master)](https://coveralls.io/github/maxcnunes/httpfake?branch=master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/maxcnunes/httpfake)](https://goreportcard.com/report/github.com/maxcnunes/httpfake)
+[![Go Report Card](https://goreportcard.com/badge/github.com/voronelf/httpfake)](https://goreportcard.com/report/github.com/voronelf/httpfake)
 
 httpfake provides is a simple wrapper for [httptest](https://golang.org/pkg/net/http/httptest/) with a handful chainable API for setting up handlers to a fake server. This package is aimed to be used in tests where the original external server must not be reached. Instead is used in its place a fake server which can be configured to handle any request as desired.
 
 ## Installation
 
 ```
-go get -u github.com/maxcnunes/httpfake
+go get -u github.com/voronelf/httpfake
 ```
 
 or
 
 ```
-govendor fetch github.com/maxcnunes/httpfake
+govendor fetch github.com/voronelf/httpfake
 ```
 
 > If possible give preference for using vendor. This way the version is locked up as a dependency in your project.
 
 ## Changelog
 
-See [Releases](https://github.com/maxcnunes/httpfake/releases) for detailed history changes.
+See [Releases](https://github.com/voronelf/httpfake/releases) for detailed history changes.
 
 ## API
 
-See [godoc reference](https://godoc.org/github.com/maxcnunes/httpfake) for detailed API documentation.
+See [godoc reference](https://godoc.org/github.com/voronelf/httpfake) for detailed API documentation.
 
 ## Assertions
 
@@ -44,15 +44,15 @@ supported assertions are:
 * HTTP header and its expected value
 * The expected body of your request
 
-[WithTesting](https://godoc.org/github.com/maxcnunes/httpfake#WithTesting) **must** be provided as a server
+[WithTesting](https://godoc.org/github.com/voronelf/httpfake#WithTesting) **must** be provided as a server
 option when creating the test server if you intend to set request assertions. Failing to set the option
 when using request assertions will result in a panic.
 
 ### Custom Assertions
 
 You can also provide your own assertions by creating a type that implements the
-[Assertor interface](https://godoc.org/github.com/maxcnunes/httpfake#Assertor) or utilizing the
-[CustomAssertor function type](https://pkg.go.dev/github.com/maxcnunes/httpfake#CustomAssertor). The `Assertor.Log` method will be
+[Assertor interface](https://godoc.org/github.com/voronelf/httpfake#Assertor) or utilizing the
+[CustomAssertor function type](https://pkg.go.dev/github.com/voronelf/httpfake#CustomAssertor). The `Assertor.Log` method will be
 called for each assertion before it's processed. The `Assertor.Error` method will only be called if the
 `Assertor.Assert` method returns an error.
 

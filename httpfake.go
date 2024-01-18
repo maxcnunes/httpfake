@@ -9,15 +9,16 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	netURL "net/url"
 	"strings"
+	"sync"
 	"testing"
 )
 
 // HTTPFake is the root struct for the fake server
 type HTTPFake struct {
 	Server          *httptest.Server
-	RequestHandlers []*Request
+	mu              sync.RWMutex
+	requestHandlers []*Request
 	t               testing.TB
 }
 
@@ -42,7 +43,7 @@ func WithTesting(t testing.TB) ServerOption {
 // and sets up the initial configuration to this server's request handlers
 func New(opts ...ServerOption) *HTTPFake {
 	fake := &HTTPFake{
-		RequestHandlers: []*Request{},
+		requestHandlers: []*Request{},
 	}
 
 	var serverOpts ServerOptions
@@ -64,9 +65,13 @@ func New(opts ...ServerOption) *HTTPFake {
 				"not found request handler for [%s: %s]; registered handlers are:\n",
 				r.Method, r.URL,
 			)
-			for _, frh := range fake.RequestHandlers {
+
+			fake.mu.RLock()
+			for _, frh := range fake.requestHandlers {
 				errMsg += fmt.Sprintf("* [%s: %s]\n", frh.Method, frh.URL.Path)
 			}
+			fake.mu.RUnlock()
+
 			printError(errMsg)
 			w.WriteHeader(http.StatusNotFound)
 			return
@@ -98,8 +103,11 @@ func New(opts ...ServerOption) *HTTPFake {
 
 // NewHandler initializes the configuration for a new request handler
 func (f *HTTPFake) NewHandler() *Request {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+
 	rh := NewRequest()
-	f.RequestHandlers = append(f.RequestHandlers, rh)
+	f.requestHandlers = append(f.requestHandlers, rh)
 	return rh
 }
 
@@ -111,7 +119,10 @@ func (f *HTTPFake) ResolveURL(path string, args ...interface{}) string {
 
 // Reset wipes the request handlers definitions
 func (f *HTTPFake) Reset() *HTTPFake {
-	f.RequestHandlers = []*Request{}
+	f.mu.Lock()
+	defer f.mu.Unlock()
+
+	f.requestHandlers = []*Request{}
 	return f
 }
 
@@ -119,10 +130,13 @@ func (f *HTTPFake) Reset() *HTTPFake {
 // If the WithTesting option was specified when setting up the server Close will assert that each http handler
 // specified for this server was called
 func (f *HTTPFake) Close() {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+
 	defer f.Server.Close()
 
 	if f.t != nil {
-		for _, reqHandler := range f.RequestHandlers {
+		for _, reqHandler := range f.requestHandlers {
 			if reqHandler.called == 0 {
 				f.t.Errorf("httpfake: request handler was specified but not called %s", reqHandler.URL.Path)
 			}
@@ -131,26 +145,24 @@ func (f *HTTPFake) Close() {
 }
 
 func (f *HTTPFake) findHandler(r *http.Request) (*Request, error) {
+	f.mu.RLock()
+	defer f.mu.RUnlock()
+
 	founds := []*Request{}
 	url := r.URL.String()
 	path := getURLPath(url)
-	for _, rh := range f.RequestHandlers {
+	for _, rh := range f.requestHandlers {
 		if rh.Method != r.Method {
 			continue
 		}
 
-		rhURL, err := netURL.QueryUnescape(rh.URL.String())
-		if err != nil {
-			return nil, err
-		}
-
-		if rhURL == url {
+		if rh.URL.String() == url {
 			return rh, nil
 		}
 
 		// fallback if the income request has query strings
 		// and there is handlers only for the path
-		if getURLPath(rhURL) == path {
+		if rh.URL.Path == path {
 			founds = append(founds, rh)
 		}
 	}

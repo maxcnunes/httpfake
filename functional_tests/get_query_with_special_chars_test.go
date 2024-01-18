@@ -4,30 +4,31 @@ package functional_tests
 import (
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"testing"
 
 	"github.com/voronelf/httpfake"
 )
 
-// TestResponseSetHeader tests a fake server handling a GET request
-// and responding with a speficied header
-func TestResponseSetHeader(t *testing.T) {
+// TestGetQueryWithSpecialChars tests a fake server handling a request with special chars in path and query
+func TestGetQueryWithSpecialChars(t *testing.T) {
 	fakeService := httpfake.New()
 	defer fakeService.Server.Close()
 
 	// register a handler for our fake service
 	fakeService.NewHandler().
-		Get("/users").
+		Get("/users?name=" + url.QueryEscape("Tim Burton")).
 		Reply(200).
-		SetHeader("X-My-Header", "My Header value").
-		BodyString("[]")
+		BodyString(`[{"username": "dreamer"}]`)
 
-	req, err := http.NewRequest("GET", fakeService.ResolveURL("/users"), nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	// register second handler for our fake service
+	fakeService.NewHandler().
+		Get("/users?name=other").
+		Reply(201).
+		BodyString(`[{"username": "other"}]`)
 
-	res, err := http.DefaultClient.Do(req)
+	res, err := http.Get(fakeService.ResolveURL("/users?name=%s", url.QueryEscape("Tim Burton")))
+	//res, err := http.Get(fakeService.ResolveURL("/users?name=Tim Burton"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -40,17 +41,10 @@ func TestResponseSetHeader(t *testing.T) {
 	}
 
 	// Check the response body is what we expect
-	expected := "[]"
+	expected := `[{"username": "dreamer"}]`
 	body, _ := ioutil.ReadAll(res.Body)
 	if bodyString := string(body); bodyString != expected {
 		t.Errorf("request returned unexpected body: got %v want %v",
 			bodyString, expected)
-	}
-
-	// Check the response header is what we expect
-	expected = "My Header value"
-	if header := res.Header.Get("X-My-Header"); header != expected {
-		t.Errorf("request returned unexpected value for header X-My-Header: got %v want %v",
-			header, expected)
 	}
 }
