@@ -144,7 +144,7 @@ func (r *Request) AssertSubJSON(body string) *Request {
 		}
 	}
 
-	jsonAssertor := new(subJSON)
+	jsonAssertor := &subJSON{necessaryFields: make(map[string]any)}
 
 	js.ForEach(jsonAssertor.fillFunc(""))
 
